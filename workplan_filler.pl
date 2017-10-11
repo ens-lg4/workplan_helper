@@ -10,18 +10,16 @@ use warnings;
 sub parse_diary_file {
     my $filename = shift @_;
 
-    my (@test_data, $state, $entry_date, $entry_plan, $entry_done);
+    my (@test_data, $state, $entry);
 
     open(my $diary_file, '<', $filename) or die "Could not open $filename, please investigate";
     while(my $line=<$diary_file>) {
         chomp $line;
         if($line=~/^(?:Mon|Tue|Wed|Thu|Fri),\s*(\d{4})\_(\d+)\_(\d+):/) {
-            if($entry_date) {   # flush any previously recorded data
-                push @test_data, [$entry_date, join("\n", @$entry_plan), join("\n", @$entry_done)];
+            if($entry) {   # flush any previously recorded data
+                push @test_data, $entry;
             }
-            $entry_date = [ $1, $2, $3 ];
-            $entry_plan = [];
-            $entry_done = [];
+            $entry = { 'date' => [ $1, $2, $3 ], 'plan' => [], 'done' => [] };
             $state = undef;
 
         } elsif($line eq 'Plan:') {
@@ -31,10 +29,8 @@ sub parse_diary_file {
             $state = 'done';
 
         } else {
-            if($state eq 'plan') {
-                push $entry_plan, $line;
-            } elsif($state eq 'done') {
-                push $entry_done, $line;
+            if($state) {
+                push @{$entry->{$state}}, $line;
             } else {
                 die "No valid state, check your format";
             }
@@ -42,8 +38,8 @@ sub parse_diary_file {
     }
     close $diary_file;
 
-    if($entry_date) {   # flush any previously recorded data
-        push @test_data, [$entry_date, join("\n", @$entry_plan), join("\n", @$entry_done)];
+    if($entry) {   # flush any previously recorded data
+        push @test_data, $entry;
     }
 
     return \@test_data;
@@ -57,9 +53,10 @@ sub generate_pages {
     my $text_x_offset =  50;
 
     foreach my $idx (0..scalar(@$parsed_data)-1) {
-        my ($date_array, $plan_text, $done_text) = @{$parsed_data->[$idx]};
-
-        my ($year,$month,$day) = @$date_array;
+        my $entry               = $parsed_data->[$idx];
+        my ($year,$month,$day)  = @{$entry->{'date'}};
+        my $plan_text           = join("\n", @{$entry->{'plan'}});
+        my $done_text           = join("\n", @{$entry->{'done'}});
 
         my ($template_file, $date_y_offset, $plan_y_offset, $done_y_offset) = ($idx % 2)
             ? ('templates/WorkPlan_page2.jpg', 105, 270, 730)
