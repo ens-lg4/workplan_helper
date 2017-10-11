@@ -78,6 +78,7 @@ sub generate_pages {
     }
 }
 
-my $parsed_data = parse_diary_file( 'test_diary.txt' );
+my $filename = $ARGV[0] || 'test_diary.txt';
+my $parsed_data = parse_diary_file( $filename );
 generate_pages( $parsed_data );
 
