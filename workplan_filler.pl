@@ -10,13 +10,45 @@ use warnings;
 sub parse_diary_file {
     my $filename = shift @_;
 
-    my @fake_test_data = (
-        ['26/09/2017', "I am going to write my CV", "I did write my CV"],
-        ['27/09/2017', "I am going to write a bunch of applications\nand send them around", "I did write quite a few\nand sent them around"],
-    );
+    my (@test_data, $state, $entry_date, $entry_plan, $entry_done);
 
-    return \@fake_test_data;
+    open(my $diary_file, '<', $filename) or die "Could not open $filename, please investigate";
+    while(my $line=<$diary_file>) {
+        chomp $line;
+        if($line=~/^(?:Mon|Tue|Wed|Thu|Fri),\s*(\d{4})\_(\d+)\_(\d+):/) {
+            if($entry_date) {   # flush any previously recorded data
+                push @test_data, [$entry_date, join("\n", @$entry_plan), join("\n", @$entry_done)];
+            }
+            $entry_date = [ $1, $2, $3 ];
+            $entry_plan = [];
+            $entry_done = [];
+            $state = undef;
+
+        } elsif($line eq 'Plan:') {
+            $state = 'plan';
+
+        } elsif($line eq 'Done:') {
+            $state = 'done';
+
+        } else {
+            if($state eq 'plan') {
+                push $entry_plan, $line;
+            } elsif($state eq 'done') {
+                push $entry_done, $line;
+            } else {
+                die "No valid state, check your format";
+            }
+        }
+    }
+    close $diary_file;
+
+    if($entry_date) {   # flush any previously recorded data
+        push @test_data, [$entry_date, join("\n", @$entry_plan), join("\n", @$entry_done)];
+    }
+
+    return \@test_data;
 }
+
 
 sub generate_pages {
     my $parsed_data = shift @_;
@@ -25,11 +57,9 @@ sub generate_pages {
     my $text_x_offset =  50;
 
     foreach my $idx (0..scalar(@$parsed_data)-1) {
-        my ($date_string, $plan_text, $done_text) = @{$parsed_data->[$idx]};
+        my ($date_array, $plan_text, $done_text) = @{$parsed_data->[$idx]};
 
-        my ($day,$month,$year) = split('/', $date_string);
-        $plan_text ||= '';
-        $done_text ||= '';
+        my ($year,$month,$day) = @$date_array;
 
         my ($template_file, $date_y_offset, $plan_y_offset, $done_y_offset) = ($idx % 2)
             ? ('templates/WorkPlan_page2.jpg', 105, 270, 730)
@@ -51,6 +81,6 @@ sub generate_pages {
     }
 }
 
-my $parsed_data = parse_diary_file( 'diary.txt' );
+my $parsed_data = parse_diary_file( 'test_diary.txt' );
 generate_pages( $parsed_data );
 

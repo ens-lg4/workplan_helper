@@ -1,0 +1,40 @@
+Tue, 2017_10_10:
+Plan:
+Second JobCentre meeting with Michael @3:40pm.
+Don’t be late!
+
+Carry on with Dutch and Python.
+Done:
+Discussion with Alexey about CV,
+applied to register with interviewer.io .
+Registered with InterviewCakes and tried
+to solve a few free technical problems there.
+
+Michael suggested to talk to career advisors @LionYard.
+Went and booked an appointment for tomorrow 3:30pm.
+
+Keep learning Dutch.
+
+Wed, 2017_10_11:
+Plan:
+Modularize the CV - turn sections into individual files.
+Attend the CV-related appointment in the library.
+
+Carry on with Dutch and Python.
+Done:
+Split the long version of the CV into separate .tex files,
+created a header macro for easier typesetting.
+Went to the career advice centre in the library
+and had an hour-long discussion about improving my CV.
+Lots of new ideas to try.
+
+Keep learning Dutch.
+
+Thu, 2017_10_12:
+Plan:
+Finish the script to parse this diary
+into the WorkPlan pages automatically.
+
+Carry on with Dutch and Python.
+Done:
+
