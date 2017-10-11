@@ -7,6 +7,36 @@
 use strict;
 use warnings;
 
+my $params = {  # specific parameters that may need tuning when either template files or the font changes:
+
+    'font_colour'   => 'green',
+    'font_size'     => 40,
+
+    'coord' => [
+        {       # geometric params for the odd pages:
+            'template_file' => 'templates/WorkPlan_page1.jpg',
+            'date_x_offset' => 130,
+            'date_y_offset' => 330,
+            'gap_1'         =>   8,
+            'gap_2'         =>   9,
+            'text_x_offset' =>  50,
+            'plan_y_offset' => 500,
+            'done_y_offset' => 920,
+
+        },
+        {       # geometric params for the even pages:
+            'template_file' => 'templates/WorkPlan_page2.jpg',
+            'date_x_offset' => 130,
+            'date_y_offset' => 105,
+            'gap_1'         =>   8,
+            'gap_2'         =>   9,
+            'text_x_offset' =>  50,
+            'plan_y_offset' => 270,
+            'done_y_offset' => 730,
+        },
+    ],
+};
+
 sub parse_diary_file {
     my $filename = shift @_;
 
@@ -49,18 +79,14 @@ sub parse_diary_file {
 sub generate_pages {
     my $parsed_data = shift @_;
 
-    my $date_x_offset = 130;
-    my $text_x_offset =  50;
 
     foreach my $idx (0..scalar(@$parsed_data)-1) {
         my $entry               = $parsed_data->[$idx];
         my ($year,$month,$day)  = @{$entry->{'date'}};
-        my $plan_text           = join("\n", @{$entry->{'plan'}});
-        my $done_text           = join("\n", @{$entry->{'done'}});
 
-        my ($template_file, $date_y_offset, $plan_y_offset, $done_y_offset) = ($idx % 2)
-            ? ('templates/WorkPlan_page2.jpg', 105, 270, 730)
-            : ('templates/WorkPlan_page1.jpg', 330, 500, 920);
+        my ($template_file, $date_x_offset, $date_y_offset, $gap_1, $gap_2, $text_x_offset, $plan_y_offset, $done_y_offset)
+            = @{$params->{'coord'}[ $idx % 2 ]}
+                {'template_file','date_x_offset','date_y_offset','gap_1','gap_2','text_x_offset','plan_y_offset','done_y_offset'};
 
         my $output_filename = sprintf("WP_%4d_%02d_%02d.jpg", $year, $month, $day);
 
@@ -68,11 +94,11 @@ sub generate_pages {
 
         system( 'convert',
                 $template_file,
-                -fill => 'green',
-                -pointsize => 40, 
-                -draw => sprintf("text $date_x_offset,$date_y_offset '%02d%8s%02d%9s%4d'", $day, '', $month, '', $year),
-                -draw => sprintf("text $text_x_offset,$plan_y_offset '$plan_text'"),
-                -draw => sprintf("text $text_x_offset,$done_y_offset '$done_text'"),
+                -fill       => $params->{'font_colour'},
+                -pointsize  => $params->{'font_size'},
+                -draw => sprintf("text %d,%d '%02d%s%02d%s%4d'", $date_x_offset, $date_y_offset, $day, ' 'x$gap_1, $month, ' 'x$gap_2, $year),
+                -draw => sprintf("text %d,%d '%s'", $text_x_offset, $plan_y_offset, join("\n", @{$entry->{'plan'}}) ),
+                -draw => sprintf("text %d,%d '%s'", $text_x_offset, $done_y_offset, join("\n", @{$entry->{'done'}}) ),
                 $output_filename,
         );
     }
