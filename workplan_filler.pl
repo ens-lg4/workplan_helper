@@ -58,8 +58,8 @@ sub parse_diary_file {
         } elsif($line eq 'Done:') {
             $state = 'done';
 
-        } else {
-            if($state) {
+        } elsif($line!~/^#/) {  # (commented out lines should be skipped by the parser)
+            if($state) {    # keep adding lines to the current state's buffer:
                 push @{$entry->{$state}}, $line;
             } else {
                 die "No valid state, check your format";
