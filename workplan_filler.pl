@@ -8,35 +8,7 @@ use strict;
 use warnings;
 use YAML 'LoadFile';
 
-my $params = {  # specific parameters that may need tuning when either template files or the font changes:
-
-    'font_colour'   => 'green',
-    'font_size'     => 40,
-
-    'coord' => [
-        {       # geometric params for the odd pages:
-            'template_file' => 'templates/WorkPlan_page1.jpg',
-            'date_x_offset' => 130,
-            'date_y_offset' => 330,
-            'gap_1'         =>   8,
-            'gap_2'         =>   9,
-            'text_x_offset' =>  50,
-            'plan_y_offset' => 500,
-            'done_y_offset' => 920,
-
-        },
-        {       # geometric params for the even pages:
-            'template_file' => 'templates/WorkPlan_page2.jpg',
-            'date_x_offset' => 130,
-            'date_y_offset' => 105,
-            'gap_1'         =>   8,
-            'gap_2'         =>   9,
-            'text_x_offset' =>  50,
-            'plan_y_offset' => 270,
-            'done_y_offset' => 730,
-        },
-    ],
-};
+my $layout = LoadFile( 'page_layout.yml' );
 
 sub parse_txt_file {
     my $filename = shift @_;
@@ -97,7 +69,7 @@ sub generate_pages {
         my $done_text           = (ref($entry->{'Done'}) eq 'ARRAY') ? join("\n", @{$entry->{'Done'}}) : $entry->{'Done'};
 
         my ($template_file, $date_x_offset, $date_y_offset, $gap_1, $gap_2, $text_x_offset, $plan_y_offset, $done_y_offset)
-            = @{$params->{'coord'}[ $idx % 2 ]}
+            = @{$layout->{'coord'}[ $idx % 2 ]}
                 {'template_file','date_x_offset','date_y_offset','gap_1','gap_2','text_x_offset','plan_y_offset','done_y_offset'};
 
         my $output_filename = sprintf("WP_%4d_%02d_%02d.jpg", $year, $month, $day);
@@ -106,8 +78,8 @@ sub generate_pages {
 
         system( 'convert',
                 $template_file,
-                -fill       => $params->{'font_colour'},
-                -pointsize  => $params->{'font_size'},
+                -fill       => $layout->{'font_colour'},
+                -pointsize  => $layout->{'font_size'},
                 -draw => sprintf("text %d,%d '%02d%s%02d%s%4d'", $date_x_offset, $date_y_offset, $day, ' 'x$gap_1, $month, ' 'x$gap_2, $year),
                 -draw => sprintf("text %d,%d '%s'", $text_x_offset, $plan_y_offset, $plan_text ),
                 -draw => sprintf("text %d,%d '%s'", $text_x_offset, $done_y_offset, $done_text ),

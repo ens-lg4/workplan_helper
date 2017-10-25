@@ -1,0 +1,24 @@
+# Page metrics, partially font_size-dependent:
+
+font_colour:    green
+font_size:      40
+coord:   
+            # geometric params for the odd pages:
+    -   template_file : templates/WorkPlan_page1.jpg
+        date_x_offset : 130
+        date_y_offset : 330
+        gap_1         :   8
+        gap_2         :   9
+        text_x_offset :  50
+        plan_y_offset : 500
+        done_y_offset : 920
+
+            # geometric params for the even pages:
+    -   template_file : templates/WorkPlan_page2.jpg
+        date_x_offset : 130
+        date_y_offset : 105
+        gap_1         :   8
+        gap_2         :   9
+        text_x_offset :  50
+        plan_y_offset : 270
+        done_y_offset : 730
