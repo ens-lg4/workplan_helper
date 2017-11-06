@@ -4,8 +4,9 @@ It is a simple script that may be useful for those officially unemployed in the 
 who are registered with a local JobCentre and need to maintain and show a record
 of their continuous efforts to look for a job.
 
-In case you find composing a simple YAML file an easier task than filling in
-the so-called "My Work Plan" booklet, you are welcome to use this script.
+In case you find composing a simple YAML file to be an easier task than filling in
+the so-called "My Work Plan" booklet [(2013 version online)](http://welfare.povertyalliance.org/userfiles/files/Copy%20of%20JSA%20workplan_Diary.pdf),
+you are welcome to use this script.
 
 Naturally, I cannot be held accountable for any misuse of this software
 as my original intention was to simplify the tedious data entry, and to practice Python.
@@ -16,8 +17,10 @@ per image file. If you then print them together in 2*A5 booklet mode (OSX printe
 can do that out of the box), you'll get the output pretty close to the original booklet.
 The main noticeable difference would be the lack of page numbers.
 
-NB: If you discover that the format or the page layout of "My Work Plan" has changed,
+Please note, that the empty template pages in this project were scanned
+from the paper version of "My Work Plan" that was up-to-date in 2017.
+If you discover that the format or the page layout of "My Work Plan" has changed,
 you may need to re-scan the two recurring pages of the "My Work Plan" booklet
 and tweak the page_layout.yml file to reflect those changes.
 
-Feel free to tweak other parameters in page_layout.ym (such as font size/colour) or add your own.
+Feel free to tweak other parameters in page_layout.yml (such as font size/colour) or add your own.
