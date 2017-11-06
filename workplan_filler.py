@@ -3,6 +3,8 @@
 # Generate dated pages for "My Work Plan" booklet and insert the text into it.
 #
 # This software is not official. By using it you assume all risks and liabilities.
+#
+# Dependency: ImageMagick has to be installed and 'convert' has to be in the PATH
 
 import sys
 import yaml
