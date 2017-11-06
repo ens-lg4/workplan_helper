@@ -8,45 +8,6 @@ use strict;
 use warnings;
 use YAML 'LoadFile';
 
-my $layout = LoadFile( 'page_layout.yml' );
-
-sub parse_txt_file {
-    my $filename = shift @_;
-
-    my (@test_data, $state, $entry);
-
-    open(my $diary_file, '<', $filename) or die "Could not open $filename, please investigate";
-    while(my $line=<$diary_file>) {
-        chomp $line;
-        if($line=~/^((?:Mon|Tue|Wed|Thu|Fri),\s*\d{4}\_\d+\_\d+):/) {
-            if($entry) {   # flush any previously recorded data
-                push @test_data, $entry;
-            }
-            $entry = { 'Date' =>  $1, 'Plan' => [], 'Done' => [] };
-            $state = undef;
-
-        } elsif($line eq 'Plan:') {
-            $state = 'Plan';
-
-        } elsif($line eq 'Done:') {
-            $state = 'Done';
-
-        } elsif($line!~/^#/) {  # (commented out lines should be skipped by the parser)
-            if($state) {    # keep adding lines to the current state's buffer:
-                push @{$entry->{$state}}, $line;
-            } else {
-                die "No valid state, check your format";
-            }
-        }
-    }
-    close $diary_file;
-
-    if($entry) {   # flush any previously recorded data
-        push @test_data, $entry;
-    }
-
-    return \@test_data;
-}
 
 sub parse_yml_file {
     my $filename = shift @_;
@@ -54,8 +15,11 @@ sub parse_yml_file {
     return LoadFile( $filename );
 }
 
+
 sub generate_pages {
     my $parsed_data = shift @_;
+
+    my $layout = parse_yml_file( 'page_layout.yml' );
 
     foreach my $idx (0..scalar(@$parsed_data)-1) {
         my $entry               = $parsed_data->[$idx];
@@ -88,9 +52,10 @@ sub generate_pages {
     }
 }
 
-my $filename = $ARGV[0] || 'test_diary.yml';
-my $parsed_data = ($filename=~/\.(yml|yaml)$/)
-    ? parse_yml_file( $filename )
-    : parse_txt_file( $filename );
-generate_pages( $parsed_data );
+
+if(scalar(@ARGV) == 1) {
+    generate_pages( parse_yml_file( $ARGV[0] ) );
+} else {
+    die "Please provide your diary.yml filename as the first argument\n";
+}
 
