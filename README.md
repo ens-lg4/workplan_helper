@@ -13,8 +13,8 @@ as my original intention was to simplify the tedious data entry, and to practice
 Running the script with your diary file on a Linux/OSX machine with ImageMagick installed
 is supposed to generate a bunch of .jpg files, one filled-in page in portrait orientation
 per image file. If you then print them together in 2*A5 booklet mode (OSX printer drivers
-can do that out of the box). The only difference from the original booklet would be the lack
-of page numbers.
+can do that out of the box), you'll get the output pretty close to the original booklet.
+The main noticeable difference would be the lack of page numbers.
 
 NB: If you discover that the format or the page layout of "My Work Plan" has changed,
 you may need to re-scan the two recurring pages of the "My Work Plan" booklet
