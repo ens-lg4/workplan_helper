@@ -17,6 +17,12 @@ def parse_yml_file(filename):
             print(exc)
             sys.exit(2)
 
+def join_together(input):
+    if(type(input) == list):
+        return "\n".join(input)
+    else:
+        return input
+
 def generate_pages(parsed_data):
 
     layout  = parse_yml_file('page_layout.yml');
@@ -30,8 +36,8 @@ def generate_pages(parsed_data):
         day             = parsed_date.day
         output_filename = 'WP_%4d_%02d_%02d.jpg' % (year, month, day)
 
-        plan_text       = entry['Plan']
-        done_text       = entry['Done']
+        plan_text       = join_together( entry['Plan'] )
+        done_text       = join_together( entry['Done'] )
 
         layout_page     = layout['coord'][idx % 2]
 
